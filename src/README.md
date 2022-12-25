@@ -12,3 +12,4 @@
 - `queryClient`
 - `/products`, `/products/:id`
 - `scss`
+- `gnb`
