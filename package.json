@@ -27,12 +27,12 @@
     "vite": "^4.0.0"
   },
   "lint-staged": {
-    "*.+(js|jsx|ts|tsx)": [
+    "src/**/*.+(js|jsx|ts|tsx)": [
       "eslint --fix",
       "prettier --write",
       "git add"
     ],
-    "*.+(js|jsx|ts|tsx|json|css|md|mdx)": [
+    "src/**/*.+(js|jsx|ts|tsx|json|css|md|mdx)": [
       "prettier --write"
     ]
   }
