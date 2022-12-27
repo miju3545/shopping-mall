@@ -1,9 +1,10 @@
 .cart {
-  display: flex;
-  grid-template-columns: repeat(3, 1fr);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   padding: 0;
   list-style: none;
+  overflow-x: scroll;
 }
 
 .cart-item {
@@ -24,6 +25,7 @@
   }
 
   &__price {
+    color: gray;
   }
   &__amount {
   }
@@ -43,4 +45,63 @@
 .select-all-button {
   display: block;
   margin-bottom: 10px;
+}
+
+.cart-paypreview {
+  // display: flex;
+  border: 1px solid #dfdfdf;
+  padding: 10px;
+  margin: 20px 0;
+
+  h3 {
+    margin-bottom: 10px;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px dotted #dfdfdf;
+    p {
+      margin-left: 10px;
+    }
+  }
+
+  img {
+    width: 80px;
+    height: 50px;
+    object-fit: contain;
+  }
+
+  &__pay {
+    margin-top: 20px;
+    font-style: italic;
+    font-weight: 600;
+    color: blue;
+  }
+
+  &__button-zone {
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    button {
+      padding: 10px 20px;
+      border: 1px solid #dfdfdf;
+      border-radius: 4px;
+      border-color: blue;
+      background-color: #fff;
+      color: blue;
+      cursor: pointer;
+    }
+
+    button[disabled] {
+      color: gray;
+      text-decoration: line-through;
+      border-color: #dfdfdf;
+      cursor: text;
+    }
+  }
 }

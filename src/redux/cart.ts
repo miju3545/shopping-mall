@@ -1,69 +1,69 @@
-import { Product } from '../graphql/products';
+import { Cart } from '@/graphql/cart';
 
-const ADD_ITEM = 'cart/ADD_ITEM' as const;
-const REMOVE_ITEM = 'cart/REMOVE_ITEM' as const;
-const REMOVE_TOTAL = 'cart/REMOVE_TOTAL' as const;
+const CONTROL_CART = 'cart/CONTROL_CART' as const;
+const ADD_CART = 'cart/ADD_CART' as const;
+const REMOVE_CART = 'cart/REMOVE_CART' as const;
+const UPDATE_CART = 'cart/UPDATE_CART' as const;
 const OPEN_CART = 'cart/OPEN' as const;
 const CLOSE_CART = 'cart/CLOSE' as const;
 
-export const addItem = (product: Product) => ({ type: ADD_ITEM, payload: product });
-export const removeItem = (productId: string) => ({ type: REMOVE_ITEM, payload: productId });
-export const removeTotal = (productId: string) => ({ type: REMOVE_TOTAL, payload: productId });
+export const controlCart = (items: Cart[]) => ({ type: CONTROL_CART, payload: items });
+export const addCart = (item: Cart) => ({ type: ADD_CART, payload: item });
+export const updateCart = ({ id, amount }: { id: string; amount: number }) => ({
+  type: UPDATE_CART,
+  payload: { id, amount },
+});
+
+export const removeCart = ({ id }: { id: string }) => ({ type: REMOVE_CART, payload: { id } });
 export const openCart = () => ({ type: OPEN_CART });
 export const closeCart = () => ({ type: CLOSE_CART });
 
 type CartAction =
-  | ReturnType<typeof addItem>
-  | ReturnType<typeof removeItem>
-  | ReturnType<typeof removeTotal>
+  | ReturnType<typeof controlCart>
+  | ReturnType<typeof addCart>
+  | ReturnType<typeof updateCart>
+  | ReturnType<typeof removeCart>
   | ReturnType<typeof openCart>
   | ReturnType<typeof closeCart>;
 
 type CartState = {
-  cart: Map<string, number>;
+  cart: Cart[];
   isOpen: boolean;
 };
 
 const initialState: CartState = {
-  cart: new Map(),
+  cart: [],
   isOpen: false,
 };
 
 export default function Cart(state: CartState = initialState, action: CartAction): CartState {
   switch (action.type) {
-    case ADD_ITEM: {
-      const id = action.payload.id;
-      if (state.cart.has(id)) {
-        state.cart.set(id, (state.cart.get(id) || 1) + 1);
-      } else {
-        state.cart.set(id, 1);
-      }
-
-      return { ...state };
+    case CONTROL_CART: {
+      const items = action.payload;
+      return { ...state, cart: items };
     }
-    case REMOVE_ITEM: {
-      const id = action.payload;
-      const count = state.cart.get(id) || 1;
+    case ADD_CART: {
+      const { id } = action.payload;
+      const newItem = { ...action.payload, amount: (action.payload.amount || 0) + 1 };
 
-      if (count > 1) {
-        state.cart.set(id, count - 1);
-      } else {
-        state.cart.delete(id);
-      }
-
-      return { ...state };
-      break;
+      return { ...state, cart: [...state.cart, newItem] };
     }
 
-    case REMOVE_TOTAL: {
-      const id = action.payload;
-
-      state.cart.delete(id);
-
-      return { ...state };
-      break;
+    case UPDATE_CART: {
+      const { id, amount } = action.payload;
+      const newCart = state.cart.map((item) => {
+        if (item.id === id) item.amount = amount;
+        return item;
+      });
+      return { ...state, cart: newCart };
     }
-    // return { ...state, cart: state.cart.filter((item) => item.id !== action.payload) };
+
+    case REMOVE_CART: {
+      const { id } = action.payload;
+
+      const newCart = state.cart.filter((item) => item.id !== id);
+      return { ...state, cart: newCart };
+    }
     case OPEN_CART:
       return { ...state, isOpen: true };
     case CLOSE_CART:

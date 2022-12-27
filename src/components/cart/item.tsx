@@ -4,6 +4,7 @@ import { useMutation } from 'react-query';
 import { graphqlFetcher, getClient, QueryKeys } from '../../queryClient';
 import { Cart, DELETE_CART, UPDATE_CART } from '../../graphql/cart';
 import siteMetaData from '../../data/siteMetaData';
+import ItemData from './itemData';
 
 const CartItem = forwardRef<HTMLInputElement, { item: Cart }>(function CartItem({ item }, ref) {
   const amountRef = useRef<HTMLInputElement | null>(null);
@@ -68,7 +69,13 @@ const CartItem = forwardRef<HTMLInputElement, { item: Cart }>(function CartItem(
   return (
     <li className="cart-item">
       <div className="cart-item__buttons">
-        <input type="checkbox" className="cart-item__checkbox" name={`select-item`} ref={ref} />
+        <input
+          type="checkbox"
+          className="cart-item__checkbox"
+          name={`select-item`}
+          value={item.id}
+          ref={ref}
+        />
         <button
           type="button"
           className="cart-item__delete"
@@ -77,11 +84,7 @@ const CartItem = forwardRef<HTMLInputElement, { item: Cart }>(function CartItem(
           삭제
         </button>
       </div>
-      <img src={item.imageUrl} className="cart-item__image" />
-      <p className="cart-item__title">{item.title}</p>
-      <p className="cart-item__price">
-        {(item.amount * item.price).toLocaleString(siteMetaData.locale)}원
-      </p>
+      <ItemData item={item} />
       <div className="cart-item__amount-controller">
         <button type="button" onClick={handleUpdateAmount('DECREASE')}>
           -
