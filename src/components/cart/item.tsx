@@ -1,19 +1,43 @@
 import React, { SyntheticEvent, useState } from 'react';
 
 import { useMutation } from 'react-query';
-import { graphqlFetcher } from '../../queryClient';
+import { graphqlFetcher, getClient, QueryKeys } from '../../queryClient';
 import { ADD_CART, Cart, UPDATE_CART } from '../../graphql/cart';
 
 export default function CartItem({ item }: { item: Cart }) {
-  const [amount, setAmount] = useState(item.amount);
-  const { mutate: updateCart } = useMutation(({ id, amount }: { id: string; amount: number }) =>
-    graphqlFetcher(UPDATE_CART, { id, amount })
-  );
+  const queryClient = getClient();
+  const { mutate: updateCart } = useMutation(
+    ({ id, amount }: { id: string; amount: number }) => graphqlFetcher(UPDATE_CART, { id, amount }),
+    {
+      onMutate: async ({ id, amount }) => {
+        await queryClient.cancelQueries(QueryKeys.CART);
 
+        const prevCart = queryClient.getQueryData<{ [key: string]: Cart }>(QueryKeys.CART);
+        if (!prevCart?.[id]) return prevCart;
+
+        const newCart = { ...(prevCart || {}), [id]: { ...prevCart[id], amount } };
+        queryClient.setQueryData(QueryKeys.CART, newCart);
+        return prevCart;
+      },
+      onSuccess: (newValue) => {
+        const prevCart = queryClient.getQueryData<{ [key: string]: Cart }>(QueryKeys.CART);
+        const newCart = { ...(prevCart || {}), [item.id]: newValue };
+        queryClient.setQueryData(QueryKeys.CART, newCart);
+      },
+    }
+  );
   const handleUpdateAmount = (e: SyntheticEvent) => {
     const amount = Number((e.target as HTMLInputElement).value);
-    setAmount(amount);
-    updateCart({ id: item.id, amount });
+    updateCart(
+      { id: item.id, amount }
+      // {
+      //   onSuccess: (newValue) => {
+      //     const prevCart = queryClient.getQueryData<{ [key: string]: Cart }>(QueryKeys.CART);
+      //     const newCart = { ...prevCart, ...newValue };
+      //     queryClient.setQueryData(QueryKeys.CART, newCart);
+      //   },
+      // }
+    );
   };
 
   return (
@@ -24,7 +48,7 @@ export default function CartItem({ item }: { item: Cart }) {
       <input
         type="number"
         className="cart-item__amount"
-        value={amount}
+        value={item.amount}
         onChange={handleUpdateAmount}
       />
     </li>
