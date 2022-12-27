@@ -1,21 +1,32 @@
-import React from 'react';
+import React, { SyntheticEvent, useState } from 'react';
 
 import { useMutation } from 'react-query';
 import { graphqlFetcher } from '../../queryClient';
-import { ADD_CART, Cart, REMOVE_CART } from '../../graphql/cart';
+import { ADD_CART, Cart, UPDATE_CART } from '../../graphql/cart';
 
 export default function CartItem({ item }: { item: Cart }) {
-  const { mutate: addItem } = useMutation((id: string) => graphqlFetcher(ADD_CART, { id }));
-  const { mutate: removeItem } = useMutation((id: string) => graphqlFetcher(REMOVE_CART, { id }));
+  const [amount, setAmount] = useState(item.amount);
+  const { mutate: updateCart } = useMutation(({ id, amount }: { id: string; amount: number }) =>
+    graphqlFetcher(UPDATE_CART, { id, amount })
+  );
+
+  const handleUpdateAmount = (e: SyntheticEvent) => {
+    const amount = Number((e.target as HTMLInputElement).value);
+    setAmount(amount);
+    updateCart({ id: item.id, amount });
+  };
 
   return (
-    <div>
-      <span>{item.title}</span>
-      <div>
-        <button onClick={() => removeItem(item.id)}>-</button>
-        <span>{item.amount}</span>
-        <button onClick={() => addItem(item.id)}>+</button>
-      </div>
-    </div>
+    <li className="cart-item">
+      <img src={item.imageUrl} className="cart-item__image" />
+      <p className="cart-item__title">{item.title}</p>
+      <p className="cart-item__price">{item.price}</p>
+      <input
+        type="number"
+        className="cart-item__amount"
+        value={amount}
+        onChange={handleUpdateAmount}
+      />
+    </li>
   );
 }

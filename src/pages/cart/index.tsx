@@ -6,12 +6,14 @@ import { Cart, GET_CART } from '../../graphql/cart';
 import CartList from '../../components/cart';
 
 export default function CartPage() {
-  const { data } = useQuery<Cart[]>(QueryKeys.CART, () => graphqlFetcher(GET_CART));
+  const { data } = useQuery(QueryKeys.CART, () => graphqlFetcher(GET_CART), {
+    staleTime: 0,
+    cacheTime: 1000,
+  });
 
   if (!data) return null;
 
   const cartItems = Object.values(data) as Cart[];
-
   return (
     <div>
       <h2>장바구니</h2>

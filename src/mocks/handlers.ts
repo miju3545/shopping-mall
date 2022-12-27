@@ -1,6 +1,6 @@
 import { graphql } from 'msw';
 import { GET_PRODUCTS, GET_PRODUCT } from '../graphql/products';
-import { ADD_CART, REMOVE_CART, GET_CART, Cart } from '../graphql/cart';
+import { ADD_CART, REMOVE_CART, GET_CART, Cart, UPDATE_CART } from '../graphql/cart';
 
 const mockProducts = (() =>
   Array.from({ length: 100 }, (_, i) => ({
@@ -43,24 +43,21 @@ export const handlers = [
 
     cartData = newData;
 
-    console.log('ADD_CART', cartData);
-
     return res(ctx.data(cartData));
   }),
 
-  graphql.mutation(REMOVE_CART, (req, res, ctx) => {
+  graphql.mutation(UPDATE_CART, (req, res, ctx) => {
     const newData = { ...cartData };
-    const id = req.variables.id;
+    const { id, amount } = req.variables;
 
-    if (newData[id].amount > 1) {
-      newData[id] = { ...newData[id], amount: newData[id].amount - 1 };
-    } else {
-      delete newData[id];
-    }
+    if (!newData[id]) throw new Error('없는 데이터입니다.');
+    newData[id] = { ...newData[id], amount };
+
+    // if (newData[id].amount <= 0) {
+    //   delete newData[id];
+    // }
 
     cartData = newData;
-
-    console.log('REMOVE_CART', cartData);
 
     return res(ctx.data(newData));
   }),

@@ -4,7 +4,7 @@ import CartItem from './item';
 
 export default function CartList({ items }: { items: Cart[] }) {
   return (
-    <ul>
+    <ul className="cart">
       {items.map((item) => (
         <CartItem key={item.id} item={item} />
       ))}
