@@ -1,10 +1,12 @@
-import React, { SyntheticEvent, useState } from 'react';
+import React, { SyntheticEvent, useRef, useState } from 'react';
 
 import { useMutation } from 'react-query';
 import { graphqlFetcher, getClient, QueryKeys } from '../../queryClient';
 import { ADD_CART, Cart, DELETE_CART, UPDATE_CART } from '../../graphql/cart';
+import siteMetaData from '../../data/siteMetaData';
 
 export default function CartItem({ item }: { item: Cart }) {
+  const amountRef = useRef<HTMLInputElement | null>(null);
   const queryClient = getClient();
   const { mutate: updateCart } = useMutation(
     ({ id, amount }: { id: string; amount: number }) => graphqlFetcher(UPDATE_CART, { id, amount }),
@@ -30,7 +32,7 @@ export default function CartItem({ item }: { item: Cart }) {
   const { mutate: deleteCart } = useMutation(
     ({ id }: { id: string }) => graphqlFetcher(DELETE_CART, { id }),
     {
-      onMutate: async (id) => {
+      onMutate: async ({ id }) => {
         await queryClient.cancelQueries(QueryKeys.CART);
 
         const prevCart = queryClient.getQueryData<{ [key: string]: Cart }>(QueryKeys.CART);
@@ -51,18 +53,27 @@ export default function CartItem({ item }: { item: Cart }) {
     }
   );
 
-  const handleUpdateAmount = (e: SyntheticEvent) => {
-    const amount = Number((e.target as HTMLInputElement).value);
-    updateCart(
-      { id: item.id, amount }
-      // {
-      //   onSuccess: (newValue) => {
-      //     const prevCart = queryClient.getQueryData<{ [key: string]: Cart }>(QueryKeys.CART);
-      //     const newCart = { ...prevCart, ...newValue };
-      //     queryClient.setQueryData(QueryKeys.CART, newCart);
-      //   },
-      // }
-    );
+  const handleUpdateAmount = (type: 'INCREASE' | 'DECREASE') => (e: SyntheticEvent) => {
+    const current = Number(amountRef.current?.value || 0);
+    const amount = type === 'INCREASE' ? current + 1 : current - 1;
+    // const amount = Number((e.target as HTMLInputElement).value)
+
+    if (amount === 0) {
+      alert('1개 이상부터 구매할 수 있는 상품입니다.');
+      return;
+    }
+
+    updateCart({ id: item.id, amount });
+    // updateCart(
+    //   { id: item.id, amount }
+    //   // {
+    //   //   onSuccess: (newValue) => {
+    //   //     const prevCart = queryClient.getQueryData<{ [key: string]: Cart }>(QueryKeys.CART);
+    //   //     const newCart = { ...prevCart, ...newValue };
+    //   //     queryClient.setQueryData(QueryKeys.CART, newCart);
+    //   //   },
+    //   // }
+    // );
   };
 
   return (
@@ -79,13 +90,24 @@ export default function CartItem({ item }: { item: Cart }) {
       </div>
       <img src={item.imageUrl} className="cart-item__image" />
       <p className="cart-item__title">{item.title}</p>
-      <p className="cart-item__price">{item.price}</p>
-      <input
-        type="number"
-        className="cart-item__amount"
-        value={item.amount}
-        onChange={handleUpdateAmount}
-      />
+      <p className="cart-item__price">
+        {(item.amount * item.price).toLocaleString(siteMetaData.locale)}원
+      </p>
+      <div className="cart-item__amount-controller">
+        <button type="button" onClick={handleUpdateAmount('DECREASE')}>
+          -
+        </button>
+        <input
+          disabled
+          type="number"
+          className="cart-item__amount"
+          value={item.amount}
+          ref={amountRef}
+        />
+        <button type="button" onClick={handleUpdateAmount('INCREASE')}>
+          +
+        </button>
+      </div>
     </li>
   );
 }
