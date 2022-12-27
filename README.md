@@ -21,7 +21,7 @@
 
 ## Day3
 
-- `/cart` 목록, 수정, 삭제 page & api
+- `/cart` 목록, 수정(update), 삭제 page & api
 - update -> `invalidateQuires`, `Opimistic update`
 - `redux`로 장바구니 내역 전역 관리
 - `/payment` page & api
