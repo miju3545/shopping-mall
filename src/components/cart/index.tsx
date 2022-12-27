@@ -1,40 +1,58 @@
 import React, { useRef, SyntheticEvent, useEffect, createRef, useState } from 'react';
 import { Cart } from '../../graphql/cart';
 import CartItem from './item';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { controlCart } from '../../redux/cart';
 import PayPreview from './payPreview';
+import { RootState } from 'src/redux';
 
 export default function CartList({ items }: { items: Cart[] }) {
   const formRef = useRef<HTMLFormElement>(null);
   const checkboxRefs = items.map(() => createRef<HTMLInputElement>());
   const [formData, setFormData] = useState<FormData>();
+  const { cart } = useSelector((state: RootState) => state.cart);
   const dispatch = useDispatch();
 
-  const handleCheckboxChanged = (e: SyntheticEvent) => {
+  const setAllCheckedFromItems = (data: FormData) => {
     if (!formRef.current) return;
 
-    const targetInput = e.target as HTMLInputElement;
-    const data = new FormData(formRef.current);
     const selectedCount = data.getAll('select-item').length;
 
-    if (targetInput.classList.contains('select-all')) {
-      const allChecked = targetInput.checked;
-      checkboxRefs.forEach((inputItem) => {
-        inputItem.current!.checked = allChecked;
-      });
+    const isAllChecked = selectedCount === items.length;
+    formRef.current.querySelector<HTMLInputElement>('.select-all')!.checked = isAllChecked;
+  };
+
+  const setItemsCheckedFromAll = (targetInput: HTMLInputElement) => {
+    const allChecked = targetInput.checked;
+    checkboxRefs.forEach((inputItem) => {
+      inputItem.current!.checked = allChecked;
+    });
+  };
+
+  const handleCheckboxChanged = (e?: SyntheticEvent) => {
+    if (!formRef.current) return;
+
+    const targetInput = e?.target as HTMLInputElement;
+    const data = new FormData(formRef.current);
+
+    if (targetInput && targetInput.classList.contains('select-all')) {
+      setItemsCheckedFromAll(targetInput);
     } else {
-      const isAllChecked = selectedCount === items.length;
-      formRef.current.querySelector<HTMLInputElement>('.select-all')!.checked = isAllChecked;
+      setAllCheckedFromItems(data);
     }
 
     setFormData(data);
   };
 
   useEffect(() => {
-    const selectAll = formRef.current?.querySelector<HTMLInputElement>('.select-all');
-    selectAll!.checked = true;
-    checkboxRefs?.forEach((inputItem) => (inputItem.current!.checked = true));
+    // const selectAll = formRef.current?.querySelector<HTMLInputElement>('.select-all');
+    // selectAll!.checked = true;
+    // checkboxRefs?.forEach((inputItem) => (inputItem.current!.checked = true));
+    cart.forEach((item) => {
+      const $itemRef = checkboxRefs.find((ref) => ref.current!.value === item.id);
+      if ($itemRef) $itemRef.current!.checked = true;
+    });
+    handleCheckboxChanged();
   }, []);
 
   useEffect(() => {
