@@ -1,5 +1,5 @@
 import { QueryClient } from 'react-query';
-import { AnyOBJ } from 'constants/types';
+import { AnyOBJ } from '@/constants/types';
 import { RequestDocument, request } from 'graphql-request';
 
 export const getClient = (() => {
@@ -48,6 +48,7 @@ export const restFetcher = async ({
     const searchParams = new URLSearchParams(params);
     url += '?' + searchParams.toString();
   }
+
   if (body) options.body = JSON.stringify(body);
 
   try {
@@ -64,4 +65,5 @@ export const graphqlFetcher = (query: RequestDocument, variables = {}) =>
 
 export const QueryKeys = {
   PRODUCTS: 'PRODUCTS',
+  CART: 'CART',
 };

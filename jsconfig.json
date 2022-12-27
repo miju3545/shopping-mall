@@ -8,7 +8,8 @@
       "@/lib/*": ["src/lib/*"],
       "@/scss/*": ["src/scss/*"],
       "@/constants/*": ["src/constants/*"],
-      "@/icons/*": ["src/icons/*"]
+      "@/icons/*": ["src/icons/*"],
+      "@/graphql/*": ["src/graphql/*"]
     }
   }
 }

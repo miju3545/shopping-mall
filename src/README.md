@@ -1,6 +1,6 @@
 ## 쇼핑몰 만들기
 
-- 목표: 전역상태관리, firebase, heroku, vercel 배포
+- 목표: 전역 상태 관리, firebase, heroku, vercel 배포
 
 ## Day1
 
@@ -13,7 +13,8 @@
 - `/products`, `/products/:id`
 - `scss`
 - `gnb`
+- `MSW`: mock service worker
 
 ## Day2
 
-- `MSW`: mock service worker
+- 장바구니(`/bag`) page & api
