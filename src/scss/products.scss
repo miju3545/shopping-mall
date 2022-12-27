@@ -14,3 +14,12 @@
     object-fit: contain;
   }
 }
+.product-item__buttons {
+  display: flex;
+  flex-direction: row-reverse;
+  margin-bottom: 10px;
+
+  &__add-cart {
+    margin-bottom: 10px;
+  }
+}

@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { graphqlFetcher } from '../../queryClient';
 import { ADD_CART } from '../../graphql/cart';
+import siteMetaData from '../../data/siteMetaData';
 
 export default function ProductItem(product: Product) {
   const { id, title, imageUrl, price } = product;
@@ -12,14 +13,16 @@ export default function ProductItem(product: Product) {
 
   return (
     <li className="product-item">
-      <button onClick={() => addCart(product.id)} className="product-item__add-cart">
-        장바구니 담기
-      </button>
+      <div className="product-item__buttons">
+        <button onClick={() => addCart(product.id)} className="product-item__add-cart">
+          장바구니 담기
+        </button>
+      </div>
       <Link to={`/products/${id}`}>
         <p className="product-item__title">{title}</p>
       </Link>
       <img className="product-item__image" src={imageUrl} alt="img" />
-      <span className="product-item__price">{price}</span>
+      <p className="product-item__price">{price.toLocaleString(siteMetaData.locale)}원</p>
     </li>
   );
 }
