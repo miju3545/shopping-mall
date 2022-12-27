@@ -1,6 +1,6 @@
 ## 쇼핑몰 만들기
 
-- 목표: 전역 상태 관리, firebase, heroku, vercel 배포
+- 목표: 전역 상태 관리(using `redux`), firebase, heroku, vercel 배포
 
 ## Day1
 
