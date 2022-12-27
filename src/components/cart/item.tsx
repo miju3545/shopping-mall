@@ -79,7 +79,7 @@ export default function CartItem({ item }: { item: Cart }) {
   return (
     <li className="cart-item">
       <div className="cart-item__buttons">
-        <input type="checkbox" className="cart-item__checkbox" />
+        <input type="checkbox" className="cart-item__checkbox" name={`select-item`} />
         <button
           type="button"
           className="cart-item__delete"
