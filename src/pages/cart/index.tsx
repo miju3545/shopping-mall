@@ -16,9 +16,9 @@ export default function CartPage() {
   const cartItems = Object.values(data) as Cart[];
   return (
     <div>
-      <h2>장바구니</h2>
+      <h2 className="page-title">장바구니</h2>
       {!cartItems.length && <small>장바구니가 비어있어요.</small>}
-      <CartList items={cartItems} />
+      {cartItems.length > 0 && <CartList items={cartItems} />}
     </div>
   );
 }
