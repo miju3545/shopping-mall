@@ -13,9 +13,10 @@ export default function CartList({ items }: { items: Cart[] }) {
   const { cart } = useSelector((state: RootState) => state.cart);
   const dispatch = useDispatch();
 
-  const setAllCheckedFromItems = (data: FormData) => {
+  const setAllCheckedFromItems = () => {
     if (!formRef.current) return;
 
+    const data = new FormData(formRef.current);
     const selectedCount = data.getAll('select-item').length;
 
     const isAllChecked = selectedCount === items.length;
@@ -38,21 +39,18 @@ export default function CartList({ items }: { items: Cart[] }) {
     if (targetInput && targetInput.classList.contains('select-all')) {
       setItemsCheckedFromAll(targetInput);
     } else {
-      setAllCheckedFromItems(data);
+      setAllCheckedFromItems();
     }
 
     setFormData(data);
   };
 
   useEffect(() => {
-    // const selectAll = formRef.current?.querySelector<HTMLInputElement>('.select-all');
-    // selectAll!.checked = true;
-    // checkboxRefs?.forEach((inputItem) => (inputItem.current!.checked = true));
     cart.forEach((item) => {
       const $itemRef = checkboxRefs.find((ref) => ref.current!.value === item.id);
       if ($itemRef) $itemRef.current!.checked = true;
     });
-    handleCheckboxChanged();
+    setAllCheckedFromItems();
   }, []);
 
   useEffect(() => {
