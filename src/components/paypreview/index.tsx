@@ -1,18 +1,20 @@
-import React from 'react';
+import React, { SyntheticEvent } from 'react';
+
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/redux';
-import ItemData from './itemData';
+import ItemData from '../cart/itemData';
 import siteMetaData from '../../data/siteMetaData';
-import { Link, useNavigate, useNavigation, useRoutes } from 'react-router-dom';
 
-export default function Pay() {
+export default function PayPreview({
+  handleSubmit,
+  submitTitle,
+}: {
+  handleSubmit: (e: SyntheticEvent) => void;
+  submitTitle: string;
+}) {
   const { cart } = useSelector((state: RootState) => state.cart);
-  const navigate = useNavigate();
   const totalPrice = cart.reduce((sum, { price, amount }) => (sum += price * amount), 0);
 
-  const handleSubmit = () => {
-    if (cart.length) navigate('/payment');
-  };
   return (
     <div className="cart-paypreview">
       <h3>결제</h3>
@@ -28,7 +30,7 @@ export default function Pay() {
       </p>
       <div className="cart-paypreview__button-zone">
         <button onClick={handleSubmit} disabled={cart.length === 0}>
-          결제하기
+          {submitTitle}
         </button>
       </div>
     </div>

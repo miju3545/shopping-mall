@@ -3,8 +3,9 @@ import { Cart } from '../../graphql/cart';
 import CartItem from './item';
 import { useDispatch, useSelector } from 'react-redux';
 import { controlCart } from '../../redux/cart';
-import PayPreview from './payPreview';
+import PayPreview from '../paypreview';
 import { RootState } from 'src/redux';
+import { useNavigate } from 'react-router-dom';
 
 export default function CartList({ items }: { items: Cart[] }) {
   const formRef = useRef<HTMLFormElement>(null);
@@ -12,6 +13,7 @@ export default function CartList({ items }: { items: Cart[] }) {
   const [formData, setFormData] = useState<FormData>();
   const { cart } = useSelector((state: RootState) => state.cart);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const setAllCheckedFromItems = () => {
     if (!formRef.current) return;
@@ -45,6 +47,10 @@ export default function CartList({ items }: { items: Cart[] }) {
     setFormData(data);
   };
 
+  const handleSubmit = () => {
+    if (cart.length) navigate('/payment');
+  };
+
   useEffect(() => {
     cart.forEach((item) => {
       const $itemRef = checkboxRefs.find((ref) => ref.current!.value === item.id);
@@ -74,7 +80,7 @@ export default function CartList({ items }: { items: Cart[] }) {
           <CartItem key={item.id} item={item} ref={checkboxRefs[i]} />
         ))}
       </ul>
-      <PayPreview />
+      <PayPreview handleSubmit={handleSubmit} submitTitle="결제창으로 이동" />
     </form>
   );
 }

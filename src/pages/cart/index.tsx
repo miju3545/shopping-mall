@@ -6,7 +6,7 @@ import { Cart, GET_CART } from '../../graphql/cart';
 import CartList from '../../components/cart';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/redux';
-import Pay from '../../components/cart/payPreview';
+import Pay from '../../components/paypreview';
 
 export default function CartPage() {
   const { data } = useQuery<Cart[]>(QueryKeys.CART, () => graphqlFetcher(GET_CART), {
