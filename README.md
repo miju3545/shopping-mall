@@ -30,3 +30,4 @@
 
 - ？ redux와 비동기 요청(`graphql & react-query`)을 동기적으로 통합해서 처리할 수 있는 방법은 없을까? `redux middleware -> redux-thunck or redux-sage`
 - 결제 페이지(`/payment`)
+- 서버 환경 설정: `json server`, `firebase`
