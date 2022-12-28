@@ -13,5 +13,15 @@
   "scripts": {
     "client": "yarn workspace client run dev",
     "sercer": "yarn workspace server run dev"
+  },
+  "lint-staged": {
+    "**/**/*.+(js|jsx|ts|tsx)": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
+    ],
+    "**/**/*.+(js|jsx|ts|tsx|json|css|md|mdx)": [
+      "prettier --write"
+    ]
   }
 }
