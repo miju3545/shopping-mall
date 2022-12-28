@@ -9,10 +9,7 @@ import { useMutation } from 'react-query';
 import { graphqlFetcher } from '../../queryClient';
 import { EXECUTE_PAY } from '../../graphql/payment';
 
-type PayInfo = {
-  id: string;
-  amount: number;
-};
+type PayInfo = string;
 
 type PayInfos = PayInfo[];
 
@@ -28,10 +25,7 @@ export default function Payment() {
 
   const onProceed = () => {
     // 1. mutation 보내기
-    const buyingItems = cart.map(({ id, amount }) => ({
-      id,
-      amount,
-    }));
+    const buyingItems = cart.map(({ id }) => id);
 
     executePay(buyingItems);
     // 2. cart state 비우기

@@ -24,7 +24,7 @@ export default function PaymentModal({
       <div className={`modal ${show ? 'show' : ''}`} onClick={onClose}>
         <div className="modal__contents" onClick={(e: SyntheticEvent) => e.stopPropagation()}>
           <p>결제를 진행하시겠습니까?</p>
-          <div>
+          <div className="modal__contents__buttons">
             <button onClick={onProceed}>네</button>
             <button onClick={onCancel}>아니요</button>
           </div>
